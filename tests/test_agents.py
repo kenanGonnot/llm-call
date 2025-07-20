@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from llm_call.agents import Agent, MultiAgentSystem
+from llm_call.agents import Agent, CommandAgent, MultiAgentSystem
 
 
 class DummyResponse:
@@ -38,3 +38,24 @@ def test_registry_distribution():
 
     assert agent1.registry == {"agent2": "resp2"}
     assert agent2.registry == {"agent1": "resp1"}
+
+
+def test_agent_reply():
+    agent = Agent(name="tester", responsibility="echo")
+    with patch("llm_call.agents.requests.post", side_effect=fake_post):
+        response = agent.reply("ping")
+    assert response == "echo:ping"
+
+
+def test_send_message():
+    agent = Agent(name="tester", responsibility="echo")
+    system = MultiAgentSystem([agent])
+    with patch("llm_call.agents.requests.post", side_effect=fake_post):
+        reply = system.send_message("tester", "hello")
+    assert reply == "echo:hello"
+
+
+def test_command_agent(tmp_path):
+    agent = CommandAgent(name="runner", responsibility="cmd", root=str(tmp_path))
+    output = agent.reply("echo hi")
+    assert output == "hi"
