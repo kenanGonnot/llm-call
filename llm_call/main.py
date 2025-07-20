@@ -3,10 +3,10 @@ from .agents import Agent, MultiAgentSystem
 
 def main():
     """Run a very small multi-agent demo."""
-    agents = [Agent("Alice"), Agent("Bob")]
+    agents = [Agent("Alice", "Developer"), Agent("Bob", "Can execute unix commands line")]
     system = MultiAgentSystem(agents)
     try:
-        messages = system.run("Hello", turns=1)
+        messages = system.run("Fais moi un projet minimalist Python", turns=2)
         for msg in messages:
             speaker = msg.get("name", msg["role"])
             print(f"{speaker}: {msg['content']}")
