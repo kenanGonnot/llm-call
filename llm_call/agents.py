@@ -11,7 +11,6 @@ except ImportError:  # pragma: no cover - handled via mock in tests
 
 import requests
 
-
 class Agent:
     """Simple wrapper around an OpenAI chat model."""
 
@@ -27,7 +26,7 @@ class Agent:
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": -1,
-            "stream": False
+            "stream": False,
         }
         headers = {"Content-Type": "application/json"}
         response = requests.post(url, json=payload, headers=headers)
@@ -46,5 +45,7 @@ class MultiAgentSystem:
         for _ in range(turns):
             for agent in self.agents:
                 reply = agent.chat(messages)
-                messages.append({"role": "assistant", "content": reply})
+                messages.append(
+                    {"role": "assistant", "name": agent.name, "content": reply}
+                )
         return messages
