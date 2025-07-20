@@ -9,6 +9,8 @@ except ImportError:  # pragma: no cover - handled via mock in tests
 
     openai = _Dummy()
 
+import requests
+
 
 class Agent:
     """Simple wrapper around an OpenAI chat model."""
@@ -18,9 +20,19 @@ class Agent:
         self.model = model
 
     def chat(self, messages):
-        """Send messages to the OpenAI API and return the assistant's reply."""
-        response = openai.ChatCompletion.create(model=self.model, messages=messages)
-        return response.choices[0].message["content"]
+        """Envoie les messages à l'API locale et retourne la réponse de l'assistant."""
+        url = "http://localhost:1234/v1/chat/completions"
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": -1,
+            "stream": False
+        }
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
 
 
 class MultiAgentSystem:
