@@ -19,10 +19,22 @@ def fake_post(url, json, headers):
 
 
 def test_system_run():
-    agent = Agent(name="tester")
+    agent = Agent(name="tester", responsibility="echo")
     system = MultiAgentSystem([agent])
 
     with patch("llm_call.agents.requests.post", side_effect=fake_post):
         messages = system.run("hello", turns=1)
     assert messages[-1]["content"] == "echo:hello"
     assert messages[-1]["name"] == "tester"
+
+
+def test_registry_distribution():
+    agent1 = Agent(name="agent1", responsibility="resp1")
+    agent2 = Agent(name="agent2", responsibility="resp2")
+    system = MultiAgentSystem([agent1, agent2])
+
+    with patch("llm_call.agents.requests.post", side_effect=fake_post):
+        system.run("hi", turns=0)
+
+    assert agent1.registry == {"agent2": "resp2"}
+    assert agent2.registry == {"agent1": "resp1"}
