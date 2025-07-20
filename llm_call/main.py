@@ -8,7 +8,8 @@ def main():
     try:
         messages = system.run("Hello", turns=1)
         for msg in messages:
-            print(f"{msg['role']}: {msg['content']}")
+            speaker = msg.get("name", msg["role"])
+            print(f"{speaker}: {msg['content']}")
     except RuntimeError as exc:
         print(exc)
         print("Please install the openai package and configure API credentials.")
