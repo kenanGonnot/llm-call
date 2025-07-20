@@ -15,7 +15,7 @@ import requests
 class Agent:
     """Simple wrapper around an OpenAI chat model."""
 
-    def __init__(self, name: str, model: str = "gpt-3.5-turbo") -> None:
+    def __init__(self, name: str, model: str = "gemma-3n-e4b-it-mlx") -> None:
         self.name = name
         self.model = model
 
